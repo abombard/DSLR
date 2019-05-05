@@ -51,16 +51,25 @@ def describe_min(feature):
     return m
 
 def describe_25(feature):
-    index = int(describe_count(feature) / 4)
-    return sorted(feature)[index]
+	index = (describe_count(feature) - 1) / 4
+	index_dec = index % 1
+	v_inf = sorted(feature)[int(index)]
+	v_sup = sorted(feature)[int(index) + 1]
+	return v_inf * (1 - index_dec) + v_sup * index_dec
 
 def describe_50(feature):
-    index = int(describe_count(feature) / 2)
-    return sorted(feature)[index]
+	index = (describe_count(feature) - 1) / 2
+	index_dec = index % 1
+	v_inf = sorted(feature)[int(index)]
+	v_sup = sorted(feature)[int(index) + 1]
+	return v_inf * (1 - index_dec) + v_sup * index_dec
 
 def describe_75(feature):
-    index = int(describe_count(feature) * 3 / 4)
-    return sorted(feature)[index]
+	index = (describe_count(feature) - 1) * 3 / 4
+	index_dec = index % 1
+	v_inf = sorted(feature)[int(index)]
+	v_sup = sorted(feature)[int(index) + 1]
+	return v_inf * (1 - index_dec) + v_sup * index_dec
 
 def describe_max(feature):
     m = feature[0]
