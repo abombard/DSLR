@@ -36,7 +36,7 @@ if __name__ == "__main__":
     headers = headers[6:]
     features = features[6:]
 
-    i1, i2 = 1, 4
+    i1, i2 = 1, 3
     scatter(headers[i1], features[i1], headers[i2], features[i2])
     sys.exit(0)
 
