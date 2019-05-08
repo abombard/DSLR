@@ -45,8 +45,8 @@ if __name__ == "__main__":
     for i1 in range(imax-1):
         h1 = headers[i1]
         for i2 in range(i1+1, imax):
-            f1 = features[i1]
-            h2 = headers[i1 + i2]
-            f2 = features[i1 + i2]
+            f1 = features[i2]
+            h2 = headers[i2]
+            f2 = features[i2]
             scatter(h1, f1, h2, f2)
     sys.exit(0)
