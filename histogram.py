@@ -25,31 +25,32 @@ def histogram(course, houses):
     stats = describe.stats(sys.argv[1])
     total = stats[course]["Count"]
     lims = [
-       stats[course]["min"],
-       stats[course]["25%"],
-       stats[course]["50%"],
-       stats[course]["75%"],
-       stats[course]["max"],
+        stats[course]["min"],
+        stats[course]["min"] + (stats[course]["max"] - stats[course]["min"]) * 1 / 11,
+        stats[course]["min"] + (stats[course]["max"] - stats[course]["min"]) * 2 / 11,
+        stats[course]["min"] + (stats[course]["max"] - stats[course]["min"]) * 3 / 11,
+        stats[course]["min"] + (stats[course]["max"] - stats[course]["min"]) * 4 / 11,
+        stats[course]["min"] + (stats[course]["max"] - stats[course]["min"]) * 5 / 11,
+        stats[course]["min"] + (stats[course]["max"] - stats[course]["min"]) * 6 / 11,
+        stats[course]["min"] + (stats[course]["max"] - stats[course]["min"]) * 7 / 11,
+        stats[course]["min"] + (stats[course]["max"] - stats[course]["min"]) * 8 / 11,
+        stats[course]["min"] + (stats[course]["max"] - stats[course]["min"]) * 9 / 11,
+        stats[course]["min"] + (stats[course]["max"] - stats[course]["min"]) * 10 / 11,
+        stats[course]["max"],
     ]
 
     legend = [[], []]
-    ind = [x for x in range(4)]
-    bottom = [0 for x in range(4)]
+    ind = [x for x in range(len(lims) - 1)]
+    bottom = [0 for x in range(len(lims) - 1)]
     for house, notes in houses.items():
-        counts = [count_elem_in(notes, lims[i], lims[i+1]) / total * 100 for i in range(4)]
-        p = plt.bar(ind, counts, bottom=bottom, align='edge')
-        bottom = [bottom[i] + counts[i] for i in range(4)]
+        counts = [count_elem_in(notes, lims[i], lims[i+1]) / total * 100 for i in range(len(lims) - 1)]
+        p = [plt.bar(ind, counts, width = 1, bottom=bottom, align='edge')]
+        bottom = [bottom[i] + counts[i] for i in range(len(lims) - 1)]
         legend[0] += [p[0]]
         legend[1] += [house]
 
     plt.title(course)
-    plt.xticks([x for x in range(5)], (
-        "%.3f" % stats[course]["min"],
-        "%.3f" % stats[course]["25%"],
-        "%.3f" % stats[course]["50%"],
-        "%.3f" % stats[course]["75%"],
-        "%.3f" % stats[course]["max"])
-    )
+    plt.xticks([x for x in range(len(lims))], (["%.3f" % x for x in lims]))
     plt.legend(tuple(legend[0]), tuple(legend[1]))
     plt.show()
 
@@ -85,5 +86,5 @@ if __name__ == '__main__':
         error('no such file: %s' % sys.argv[1])
 
     header, features = main_pichu(sys.argv[1])
-    index = 11
+    index = 0
     histogram(header[index], features[index])
