@@ -2,6 +2,7 @@
 
 import sys
 import os
+import copy
 import matplotlib.pyplot as plt
 
 import utils
@@ -29,3 +30,24 @@ if __name__ == "__main__":
     plt.xlabel(headers[i1])
     plt.ylabel(headers[i2])
     plt.show()
+    sys.exit(0)
+
+    # test all features
+    imax = len(features)
+    for i1 in range(imax-1):
+        h1 = headers[i1]
+        for i2 in range(i1+1, imax):
+            f1 = copy.copy(features[i1])
+            h2 = headers[i1 + i2]
+            f2 = copy.copy(features[i1 + i2])
+
+            to_pop = [i for i in range(len(f1)) if not f1[i] or not f2[i]]
+            f1 = [x for i, x in enumerate(f1) if i not in to_pop]
+            f2 = [x for i, x in enumerate(f2) if i not in to_pop]
+
+            plt.scatter(f1, f2, alpha=0.8, c="green", edgecolor='none', s=30)
+            plt.xlabel(h1)
+            plt.ylabel(h2)
+            plt.show()
+
+    sys.exit(0)
