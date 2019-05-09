@@ -18,7 +18,6 @@ def count_elem_in(List, Min, Max):
     for elem in List:
         if Min <= elem and elem <= Max:
             count += 1
-    print("COUCOU: %s, %s" % (Min, Max))
     return count
 
 def histogram(course, houses):
@@ -33,9 +32,10 @@ def histogram(course, houses):
     legend = [[], []]
     ind = [x for x in range(len(lims) - 1)]
     bottom = [0 for x in range(len(lims) - 1)]
+    colors = {"Ravenclaw": "green", "Slytherin": "red", "Gryffindor": "blue", "Hufflepuff": "yellow"}
     for house, notes in houses.items():
         counts = [count_elem_in(notes, lims[i], lims[i+1]) / total * 100 for i in range(len(lims) - 1)]
-        p = [plt.bar(ind, counts, width = 1, bottom=bottom, align='edge')]
+        p = [plt.bar(ind, counts, width = 1, bottom=bottom, align='edge', color=colors[house])]
         bottom = [bottom[i] + counts[i] for i in range(len(lims) - 1)]
         legend[0] += [p[0]]
         legend[1] += [house]
