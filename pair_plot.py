@@ -2,8 +2,13 @@ import sys
 import os
 import matplotlib.pyplot as plt
 
+import utils
+from utils import error
 import describe
 import histogram
+
+def usage():
+    error('%s [dataset]' % sys.argv[0])
 
 def pair_histogram(course, houses, i1, i2, imax):
     stats = describe.stats(sys.argv[1])
