@@ -24,20 +24,11 @@ def count_elem_in(List, Min, Max):
 def histogram(course, houses):
     stats = describe.stats(sys.argv[1])
     total = stats[course]["Count"]
-    lims = [
-        stats[course]["min"],
-        stats[course]["min"] + (stats[course]["max"] - stats[course]["min"]) * 1 / 11,
-        stats[course]["min"] + (stats[course]["max"] - stats[course]["min"]) * 2 / 11,
-        stats[course]["min"] + (stats[course]["max"] - stats[course]["min"]) * 3 / 11,
-        stats[course]["min"] + (stats[course]["max"] - stats[course]["min"]) * 4 / 11,
-        stats[course]["min"] + (stats[course]["max"] - stats[course]["min"]) * 5 / 11,
-        stats[course]["min"] + (stats[course]["max"] - stats[course]["min"]) * 6 / 11,
-        stats[course]["min"] + (stats[course]["max"] - stats[course]["min"]) * 7 / 11,
-        stats[course]["min"] + (stats[course]["max"] - stats[course]["min"]) * 8 / 11,
-        stats[course]["min"] + (stats[course]["max"] - stats[course]["min"]) * 9 / 11,
-        stats[course]["min"] + (stats[course]["max"] - stats[course]["min"]) * 10 / 11,
-        stats[course]["max"],
-    ]
+
+    Min = stats[course]["min"]
+    Max = stats[course]["max"]
+    D   = Max - Min
+    lims = [Min + D * i / 11 for i in range(12)]
 
     legend = [[], []]
     ind = [x for x in range(len(lims) - 1)]
