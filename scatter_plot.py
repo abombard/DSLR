@@ -2,7 +2,6 @@
 
 import sys
 import os
-import copy
 import matplotlib.pyplot as plt
 
 import utils
