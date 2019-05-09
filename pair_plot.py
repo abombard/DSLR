@@ -1,3 +1,5 @@
+#!/usr/bin/python3.7
+
 import sys
 import os
 import matplotlib.pyplot as plt
@@ -10,27 +12,21 @@ import histogram
 def usage():
     error('%s [dataset]' % sys.argv[0])
 
+housenames = ["Ravenclaw", "Slytherin", "Gryffindor", "Hufflepuff"]
+housecolors = ["green", "red", "blue", "yellow"]
+
 def pair_histogram(course, houses, i1, i2, imax):
     stats = describe.stats(sys.argv[1])
     total = stats[course]["Count"]
-    lims = [
-        stats[course]["min"],
-        stats[course]["min"] + (stats[course]["max"] - stats[course]["min"]) * 1 / 11,
-        stats[course]["min"] + (stats[course]["max"] - stats[course]["min"]) * 2 / 11,
-        stats[course]["min"] + (stats[course]["max"] - stats[course]["min"]) * 3 / 11,
-        stats[course]["min"] + (stats[course]["max"] - stats[course]["min"]) * 4 / 11,
-        stats[course]["min"] + (stats[course]["max"] - stats[course]["min"]) * 5 / 11,
-        stats[course]["min"] + (stats[course]["max"] - stats[course]["min"]) * 6 / 11,
-        stats[course]["min"] + (stats[course]["max"] - stats[course]["min"]) * 7 / 11,
-        stats[course]["min"] + (stats[course]["max"] - stats[course]["min"]) * 8 / 11,
-        stats[course]["min"] + (stats[course]["max"] - stats[course]["min"]) * 9 / 11,
-        stats[course]["min"] + (stats[course]["max"] - stats[course]["min"]) * 10 / 11,
-        stats[course]["max"],
-    ]
+
+    Min = stats[course]["min"]
+    Max = stats[course]["max"]
+    D   = Max - Min
+    lims = [Min + D * i / 11 for i in range(12)]
 
     ind = [x for x in range(len(lims) - 1)]
     bottom = [0 for x in range(len(lims) - 1)]
-    colors = {"Ravenclaw": "green", "Slytherin": "red", "Gryffindor": "blue", "Hufflepuff": "yellow"}
+    colors = { housenames[i]: housecolors[i] for i in range(len(housenames)) }
     for house, notes in houses.items():
         counts = [histogram.count_elem_in(notes, lims[i], lims[i+1]) / total * 100 for i in range(len(lims) - 1)]
         p = [plt.bar(ind, counts, width = 1, bottom=bottom, align='edge', color=colors[house])]
@@ -48,10 +44,10 @@ def pair_scatter(h2, f2, h1, f1, house, i1, i2, imax):
     f2_clean = [x for i, x in enumerate(f2) if i not in to_pop]
     house_clean = [x for i, x in enumerate(house) if i not in to_pop]
 
-    plt.scatter([x for i, x in enumerate(f1_clean) if house_clean[i] == "Ravenclaw"], [x for i, x in enumerate(f2_clean) if house_clean[i] == "Ravenclaw"], alpha=0.8, c="green", edgecolor='none', s=30, label="Ravenclaw")
-    plt.scatter([x for i, x in enumerate(f1_clean) if house_clean[i] == "Slytherin"], [x for i, x in enumerate(f2_clean) if house_clean[i] == "Slytherin"], alpha=0.8, c="red", edgecolor='none', s=30, label="Slytherin")
-    plt.scatter([x for i, x in enumerate(f1_clean) if house_clean[i] == "Gryffindor"], [x for i, x in enumerate(f2_clean) if house_clean[i] == "Gryffindor"], alpha=0.8, c="blue", edgecolor='none', s=30, label="Gryffindor")
-    plt.scatter([x for i, x in enumerate(f1_clean) if house_clean[i] == "Hufflepuff"], [x for i, x in enumerate(f2_clean) if house_clean[i] == "Hufflepuff"], alpha=0.8, c="yellow", edgecolor='none', s=30, label="Hufflepuff")
+    plt.scatter([x for i, x in enumerate(f1_clean) if house_clean[i] == "Ravenclaw"], [x for i, x in enumerate(f2_clean) if house_clean[i] == "Ravenclaw"], alpha=0.8, c="green", edgecolor='none', s=5, label="Ravenclaw")
+    plt.scatter([x for i, x in enumerate(f1_clean) if house_clean[i] == "Slytherin"], [x for i, x in enumerate(f2_clean) if house_clean[i] == "Slytherin"], alpha=0.8, c="red", edgecolor='none', s=5, label="Slytherin")
+    plt.scatter([x for i, x in enumerate(f1_clean) if house_clean[i] == "Gryffindor"], [x for i, x in enumerate(f2_clean) if house_clean[i] == "Gryffindor"], alpha=0.8, c="blue", edgecolor='none', s=5, label="Gryffindor")
+    plt.scatter([x for i, x in enumerate(f1_clean) if house_clean[i] == "Hufflepuff"], [x for i, x in enumerate(f2_clean) if house_clean[i] == "Hufflepuff"], alpha=0.8, c="yellow", edgecolor='none', s=5, label="Hufflepuff")
     plt.xlabel(h1, fontsize=6) if i1 == (imax - 1) else plt.xticks([])
     plt.ylabel(h2[0:10], fontsize=6) if i2 == 0 else plt.yticks([])
 
@@ -73,10 +69,25 @@ if __name__ == "__main__":
             f1 = features[i1]
             h2 = headers[i2]
             f2 = features[i2]
-            plt.subplot(13, 13, i1 * 13 + i2 + 1)
+            ax = plt.subplot(13, 13, i1 * 13 + i2 + 1)
             if i1 != i2: pair_scatter(h1, f1, h2, f2, house, i1, i2, imax)
             else: pair_histogram(header_histo[i1], features_histo[i1], i1, i2, imax)
-    fig_manager = plt.get_current_fig_manager()
-    fig_manager.window.showMaximized()
+    # fig_manager = plt.get_current_fig_manager()
+    # fig_manager.window.showMaximized()
     plt.suptitle("Pair Plot")
+    leg = plt.legend(tuple(housenames), loc='upper right')
+    plt.draw()
+
+
+    # Get the bounding box of the original legend
+    bb = leg.get_bbox_to_anchor().inverse_transformed(ax.transAxes)
+
+    # Change to location of the legend. 
+    xOffset = 1.5
+    bb.x0 += xOffset
+    bb.x1 += xOffset
+    leg.set_bbox_to_anchor(bb, transform = ax.transAxes)
+
+
     plt.show()
+
