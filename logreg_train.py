@@ -7,8 +7,17 @@ import utils
 from utils import error
 import describe
 import histogram
+import file
 
+learning_rate = 0.1
+logreg_iter_nb = 1000
 housenames = ["Ravenclaw", "Slytherin", "Gryffindor", "Hufflepuff"]
+
+def scale(feature_matrix):
+    min_matrix = np.min(feature_matrix, axis = 1).reshape(-1, 1)
+    max_matrix = np.max(feature_matrix, axis = 1).reshape(-1, 1)
+    scaled_feature_matrix = (feature_matrix - min_matrix) / (max_matrix - min_matrix)
+    return scaled_feature_matrix
 
 def calc_mean(feature):
     mean_feature = 0.0
@@ -24,6 +33,29 @@ def calc_mean_features(features, feature_number):
             mean_features[i][housename] = calc_mean(features[i][housename])
     return mean_features
 
+def g(z):
+    return 1 / (1 + np.exp(-z))
+
+def h(theta_matrix, x):
+    return g(np.dot(theta_matrix.T, x))
+
+def logreg_step(house, x, theta_matrix, y):
+    print("a")
+    m = float(len(theta_matrix[0]))
+    diff = h(theta_matrix, x) - y
+    sum_matrix = np.dot(x, diff.T)
+    theta_matrix -= learning_rate / m * sum_matrix
+
+def logreg(house, data, theta_matrix):
+    y = np.empty([len(data["House"]), 1])
+    for i in range(len(y)):
+        y[i][0] = 1.0 if data["House"][i] == house else 0.0
+    print(y)
+    y = y.reshape(1, -1)
+    print(y)
+    for i in range(logreg_iter_nb):
+        logreg_step(house, data["Features"], theta_matrix, y)
+
 def main(filename, feature_number, mean_features):
     # checks
     if not os.path.isfile(filename):
@@ -35,17 +67,17 @@ def main(filename, feature_number, mean_features):
         student_number = sum(1 for row in reader) - 1
         fs.seek(0)
         reader.__next__()
-        features = [ { "House": "", "Marks": np.empty([feature_number, 1]) } for i in range(student_number) ]
+        data = { "House": [ "" for i in range(student_number)], "Features": np.empty([feature_number, student_number]) }
         i_line = 0
         for line in reader:
             for i, field in enumerate(line):
                 if i == 1:
-                    features[i_line]["House"] = field
+                    data["House"][i_line] = field
                 elif i >= 6:
-                    features[i_line]["Marks"][i - 6][0] = float(field) if field != "" else mean_features[i - 6][features[i_line]["House"]]
+                    data["Features"][i - 6][i_line] = float(field) if field != "" else mean_features[i - 6][data["House"][i_line]]
             i_line += 1
 
-    return features
+    return data
 
 if __name__ == '__main__':
     if len(sys.argv) != 2:
@@ -56,4 +88,10 @@ if __name__ == '__main__':
     header_histo, features_histo = histogram.main_pichu(sys.argv[1])
     feature_number = len(header_histo)
     mean_features = calc_mean_features(features_histo, feature_number)
-    features = main(sys.argv[1], feature_number, mean_features)
+    data = main(sys.argv[1], feature_number, mean_features)
+    data["Features"] = scale(data["Features"])
+    data["Features"] = np.vstack((np.matrix(np.ones(len(data["Features"][0]))), data["Features"]))
+    theta_path = "resources/theta.csv"
+    theta_matrix = file.read_theta(theta_path, feature_number + 1)
+    logreg("Ravenclaw", data, theta_matrix)
+    print(theta_matrix, data["Features"][:, 15].reshape(-1,1), h(theta_matrix, data["Features"][:, 15].reshape(-1,1)))
