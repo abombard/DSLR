@@ -10,7 +10,7 @@ import histogram
 import file
 
 learning_rate = 0.01
-logreg_iter_nb = 10000
+logreg_iter_nb = 20000
 housenames = ["Ravenclaw", "Slytherin", "Gryffindor", "Hufflepuff"]
 theta_path = "theta.csv"
 
