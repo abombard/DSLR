@@ -9,9 +9,13 @@ import describe
 import histogram
 import file
 
-learning_rate = 0.1
-logreg_iter_nb = 1000
+learning_rate = 0.01
+logreg_iter_nb = 10000
 housenames = ["Ravenclaw", "Slytherin", "Gryffindor", "Hufflepuff"]
+theta_path = "theta.csv"
+
+def usage():
+    error('%s [dataset]' % sys.argv[0])
 
 def scale(feature_matrix):
     min_matrix = np.min(feature_matrix, axis = 1).reshape(-1, 1)
@@ -27,7 +31,7 @@ def calc_mean(feature):
     return mean_feature
 
 def calc_mean_features(features, feature_number):
-    mean_features = [ {"Ravenclaw": 0, "Slytherin": 0, "Gryffindor": 0, "Hufflepuff":0 } for i in range(feature_number) ]
+    mean_features = [ { "Ravenclaw": 0, "Slytherin": 0, "Gryffindor": 0, "Hufflepuff": 0 } for i in range(feature_number) ]
     for i in range (len(features)):
         for housename in housenames:
             mean_features[i][housename] = calc_mean(features[i][housename])
@@ -40,7 +44,6 @@ def h(theta_matrix, x):
     return g(np.dot(theta_matrix.T, x))
 
 def logreg_step(house, x, theta_matrix, y):
-    print("a")
     m = float(len(theta_matrix[0]))
     diff = h(theta_matrix, x) - y
     sum_matrix = np.dot(x, diff.T)
@@ -50,9 +53,7 @@ def logreg(house, data, theta_matrix):
     y = np.empty([len(data["House"]), 1])
     for i in range(len(y)):
         y[i][0] = 1.0 if data["House"][i] == house else 0.0
-    print(y)
     y = y.reshape(1, -1)
-    print(y)
     for i in range(logreg_iter_nb):
         logreg_step(house, data["Features"], theta_matrix, y)
 
@@ -91,7 +92,8 @@ if __name__ == '__main__':
     data = main(sys.argv[1], feature_number, mean_features)
     data["Features"] = scale(data["Features"])
     data["Features"] = np.vstack((np.matrix(np.ones(len(data["Features"][0]))), data["Features"]))
-    theta_path = "resources/theta.csv"
-    theta_matrix = file.read_theta(theta_path, feature_number + 1)
-    logreg("Ravenclaw", data, theta_matrix)
-    print(theta_matrix, data["Features"][:, 15].reshape(-1,1), h(theta_matrix, data["Features"][:, 15].reshape(-1,1)))
+    tn = feature_number + 1
+    theta_data = { "Ravenclaw": np.empty([tn, 1]), "Slytherin": np.empty([tn, 1]), "Gryffindor": np.empty([tn, 1]), "Hufflepuff": np.empty([tn, 1]) }
+    for house in housenames:
+        logreg(house, data, theta_data[house])
+    file.write_theta(theta_path, theta_data)
