@@ -69,4 +69,3 @@ if __name__ == '__main__':
     theta_data = file.read_theta(sys.argv[2], tn)
     houses = logreg_predict(data, theta_data)
     file.write_houses(houses)
-    data = logreg_train.read_data(sys.argv[1], feature_number, mean_features)
