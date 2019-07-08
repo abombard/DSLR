@@ -45,7 +45,7 @@ def histogram(course, houses):
     plt.legend(tuple(legend[0]), tuple(legend[1]))
     plt.show()
 
-def main_pichu(filename):
+def read_data(filename):
     # checks
     if not os.path.isfile(filename):
         error('no such file: %s' % filename)
@@ -54,18 +54,21 @@ def main_pichu(filename):
     features = []
 
     # parser: csv to feature lists
-    with open(filename, 'r') as fs:
-        reader = csv.reader(fs)
-        header = reader.__next__()
-        header = header[6:]
-        features = [ {"Ravenclaw": [], "Slytherin": [], "Gryffindor": [], "Hufflepuff":[] } for i in range(len(header)) ]
-        is_numeric = [ False for i in range(len(header)) ]
-        for line in reader:
-            for i, field in enumerate(line):
-                if i == 1:
-                    house = field
-                elif i >= 6 and field != "":
-                    features[i - 6][house] += [float(field)]
+    try:
+        with open(filename, 'r') as fs:
+            reader = csv.reader(fs)
+            header = reader.__next__()
+            header = header[6:]
+            features = [ {"Ravenclaw": [], "Slytherin": [], "Gryffindor": [], "Hufflepuff":[] } for i in range(len(header)) ]
+            is_numeric = [ False for i in range(len(header)) ]
+            for line in reader:
+                for i, field in enumerate(line):
+                    if i == 1:
+                        house = field
+                    elif i >= 6 and field != "":
+                        features[i - 6][house] += [float(field)]
+    except:
+        error("invalid dataset")
 
     return (header, features)
 
@@ -76,6 +79,6 @@ if __name__ == '__main__':
     if not os.path.isfile(sys.argv[1]):
         error('no such file: %s' % sys.argv[1])
 
-    header, features = main_pichu(sys.argv[1])
+    header, features = read_data(sys.argv[1])
     index = 0
     histogram(header[index], features[index])

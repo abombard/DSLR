@@ -1,5 +1,6 @@
 import sys
 import os
+import csv
 import numpy as np
 
 import utils
@@ -26,6 +27,30 @@ def logreg_predict(features, theta_features):
 
     return predicted_houses
 
+def read_data(filename, feature_number, mean_features):
+    # checks
+    if not os.path.isfile(filename):
+        error('no such file: %s' % filename)
+
+    # parser: csv to feature lists
+    try:
+        with open(filename, 'r') as fs:
+            reader = csv.reader(fs)
+            student_number = sum(1 for row in reader) - 1
+            fs.seek(0)
+            reader.__next__()
+            data = np.empty([feature_number, student_number])
+            i_line = 0
+            for line in reader:
+                for i, field in enumerate(line):
+                    if i >= 6:
+                        data[i - 6][i_line] = float(field) if field != "" else mean_features[i - 6]
+                i_line += 1
+    except:
+        error("invalid dataset")
+
+    return data
+
 if __name__ == '__main__':
     if len(sys.argv) != 3:
         usage()
@@ -34,13 +59,14 @@ if __name__ == '__main__':
     if not os.path.isfile(sys.argv[2]):
         error('no such file: %s' % sys.argv[2])
 
-    header_histo, features_histo = histogram.main_pichu(sys.argv[1])
+    header_histo, features_histo = histogram.read_data("resources/dataset_train.csv")
     feature_number = len(header_histo)
     mean_features = logreg_train.calc_mean_features(features_histo, feature_number)
-    data = logreg_train.main(sys.argv[1], feature_number, mean_features)
-    data["Features"] = logreg_train.scale(data["Features"])
-    data["Features"] = np.vstack((np.matrix(np.ones(len(data["Features"][0]))), data["Features"]))
+    data = read_data(sys.argv[1], feature_number, mean_features)
+    data = logreg_train.scale(data)
+    data = np.vstack((np.matrix(np.ones(len(data[0]))), data))
     tn = feature_number + 1
     theta_data = file.read_theta(sys.argv[2], tn)
-    houses = logreg_predict(data["Features"], theta_data)
+    houses = logreg_predict(data, theta_data)
     file.write_houses(houses)
+    data = logreg_train.read_data(sys.argv[1], feature_number, mean_features)

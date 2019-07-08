@@ -57,8 +57,8 @@ if __name__ == "__main__":
     if not os.path.isfile(sys.argv[1]):
         error('no such file: %s' % sys.argv[1])
 
-    header_histo, features_histo = histogram.main_pichu(sys.argv[1])
-    headers, features, is_numeric = describe.main(sys.argv[1])
+    header_histo, features_histo = histogram.read_data(sys.argv[1])
+    headers, features, is_numeric = describe.read_data(sys.argv[1])
     house = features[1]
     headers = headers[6:]
     features = features[6:]

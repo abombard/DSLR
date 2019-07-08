@@ -91,7 +91,7 @@ todo = {
     'max'  : describe_max,
 }
 
-def main(filename):
+def read_data(filename):
     # checks
     if not os.path.isfile(filename):
         error('no such file: %s' % filename)
@@ -101,23 +101,26 @@ def main(filename):
     is_numeric = []
 
     # parser: csv to feature lists
-    with open(filename, 'r') as fs:
-        reader = csv.reader(fs)
-        header = reader.__next__()
-        features = [ [] for i in range(len(header)) ]
-        is_numeric = [ False for i in range(len(header)) ]
-        for line in reader:
-            for i, field in enumerate(line):
-                if is_digit(field):
-                    is_numeric[i] = True
-                    features[i] += [float(field)]
-                else:
-                    features[i] += [field]
+    try:
+        with open(filename, 'r') as fs:
+            reader = csv.reader(fs)
+            header = reader.__next__()
+            features = [ [] for i in range(len(header)) ]
+            is_numeric = [ False for i in range(len(header)) ]
+            for line in reader:
+                for i, field in enumerate(line):
+                    if is_digit(field):
+                        is_numeric[i] = True
+                        features[i] += [float(field)]
+                    else:
+                        features[i] += [field]
+    except:
+        error("invalid dataset")
 
     return (header, features, is_numeric)
 
 def stats(filename):
-    header, features, is_numeric = main(filename)
+    header, features, is_numeric = read_data(filename)
 
     # describe
     output = {
@@ -131,7 +134,7 @@ if __name__ == '__main__':
     if len(sys.argv) != 2:
         usage()
 
-    header, features, is_numeric = main(sys.argv[1])
+    header, features, is_numeric = read_data(sys.argv[1])
 
     # print output
     fmtf = '%20.8f'

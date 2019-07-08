@@ -1,6 +1,9 @@
 import sys
 import numpy as np
 
+import utils
+from utils import error
+
 housenames = ["Ravenclaw", "Slytherin", "Gryffindor", "Hufflepuff"]
 
 def read_theta(theta_path, tn):
