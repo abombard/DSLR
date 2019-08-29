@@ -32,7 +32,7 @@ if __name__ == '__main__':
     tn = feature_number + 1
     theta_data = file.read_theta(sys.argv[2], tn)
     houses = logreg_predict.logreg_predict(data, theta_data)
-    
+
     l = len(houses)
     e = 0
     for i in range(l):
