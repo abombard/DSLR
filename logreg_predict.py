@@ -59,11 +59,15 @@ if __name__ == '__main__':
     if not os.path.isfile(sys.argv[2]):
         error('no such file: %s' % sys.argv[2])
 
-    header_histo, features_histo = histogram.read_data("resources/dataset_train.csv")
+    train_file = "resources/dataset_train.csv"
+    header_histo, features_histo = histogram.read_data(train_file)
     feature_number = len(header_histo)
     mean_features = logreg_train.calc_mean_features(features_histo, feature_number)
     data = read_data(sys.argv[1], feature_number, mean_features)
-    data = logreg_train.scale(data)
+    train_data = logreg_train.read_data(train_file, feature_number, mean_features)
+    min_matrix = np.min(train_data["Features"], axis = 1).reshape(-1, 1)
+    max_matrix = np.max(train_data["Features"], axis = 1).reshape(-1, 1)
+    data = logreg_train.scale(data, min_matrix, max_matrix)
     data = np.vstack((np.matrix(np.ones(len(data[0]))), data))
     tn = feature_number + 1
     theta_data = file.read_theta(sys.argv[2], tn)

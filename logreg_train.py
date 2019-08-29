@@ -17,11 +17,8 @@ theta_path = "theta.csv"
 def usage():
     error('%s [dataset]' % sys.argv[0])
 
-def scale(feature_matrix):
-    min_matrix = np.min(feature_matrix, axis = 1).reshape(-1, 1)
-    max_matrix = np.max(feature_matrix, axis = 1).reshape(-1, 1)
-    scaled_feature_matrix = (feature_matrix - min_matrix) / (max_matrix - min_matrix)
-    return scaled_feature_matrix
+def scale(feature_matrix, min_matrix, max_matrix):
+    return (feature_matrix - min_matrix) / (max_matrix - min_matrix)
 
 def calc_mean(feature):
     mean_feature = 0.0
@@ -95,7 +92,9 @@ if __name__ == '__main__':
     feature_number = len(header_histo)
     mean_features = calc_mean_features(features_histo, feature_number)
     data = read_data(sys.argv[1], feature_number, mean_features)
-    data["Features"] = scale(data["Features"])
+    min_matrix = np.min(data["Features"], axis = 1).reshape(-1, 1)
+    max_matrix = np.max(data["Features"], axis = 1).reshape(-1, 1)
+    data["Features"] = scale(data["Features"], min_matrix, max_matrix)
     data["Features"] = np.vstack((np.matrix(np.ones(len(data["Features"][0]))), data["Features"]))
     tn = feature_number + 1
     theta_data = { "Ravenclaw": np.empty([tn, 1]), "Slytherin": np.empty([tn, 1]), "Gryffindor": np.empty([tn, 1]), "Hufflepuff": np.empty([tn, 1]) }
