@@ -37,14 +37,14 @@ def describe_mean(feature):
     n = 0
     for x in feature:
         n += x
-    return n / describe_count(feature)
+    return 0 if describe_count(feature) == 0 else n / describe_count(feature)
 
 def describe_std(feature):
     mean = describe_mean(feature)
     variance = 0
     for x in feature:
         variance += (x - mean) ** 2
-    variance /= describe_count(feature) - 1
+    variance = 0 if describe_count(feature) - 1 == 0 else variance / (describe_count(feature) - 1)
     return math.sqrt(variance)
 
 def describe_min(feature):
