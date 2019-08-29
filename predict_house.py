@@ -14,7 +14,7 @@ def usage():
     error('%s [theta dataset]' % sys.argv[0])
 
 def ask_marks():
-    mark_matrix = np.empty([feature_number + 1, 1])
+    mark_matrix = np.zeros([feature_number + 1, 1])
     mark_matrix[0][0] = 1.0
     subject_list = ["Arithmancy", "Astronomy", "Herbology",             \
     "Defense Against the Dark Arts", "Divination", "Muggle Studies",    \

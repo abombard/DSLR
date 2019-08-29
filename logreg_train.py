@@ -68,7 +68,7 @@ def read_data(filename, feature_number, mean_features):
             student_number = sum(1 for row in reader) - 1
             fs.seek(0)
             reader.__next__()
-            data = { "House": [ "" for i in range(student_number)], "Features": np.empty([feature_number, student_number]) }
+            data = { "House": [ "" for i in range(student_number)], "Features": np.zeros([feature_number, student_number]) }
             i_line = 0
             for line in reader:
                 for i, field in enumerate(line):
@@ -97,7 +97,7 @@ if __name__ == '__main__':
     data["Features"] = scale(data["Features"], min_matrix, max_matrix)
     data["Features"] = np.vstack((np.matrix(np.ones(len(data["Features"][0]))), data["Features"]))
     tn = feature_number + 1
-    theta_data = { "Ravenclaw": np.empty([tn, 1]), "Slytherin": np.empty([tn, 1]), "Gryffindor": np.empty([tn, 1]), "Hufflepuff": np.empty([tn, 1]) }
+    theta_data = { "Ravenclaw": np.zeros([tn, 1]), "Slytherin": np.zeros([tn, 1]), "Gryffindor": np.zeros([tn, 1]), "Hufflepuff": np.zeros([tn, 1]) }
     for house in housenames:
         logreg(house, data, theta_data[house])
     file.write_theta(theta_path, theta_data)

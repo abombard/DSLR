@@ -39,7 +39,7 @@ def read_data(filename, feature_number, mean_features):
             student_number = sum(1 for row in reader) - 1
             fs.seek(0)
             reader.__next__()
-            data = np.empty([feature_number, student_number])
+            data = np.zeros([feature_number, student_number])
             i_line = 0
             for line in reader:
                 for i, field in enumerate(line):

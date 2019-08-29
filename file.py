@@ -10,7 +10,7 @@ def read_theta(theta_path, tn):
     try:
         with open(theta_path, "r") as theta_file:
             theta_file.readline()
-            theta_data = { "Ravenclaw": np.empty([tn, 1]), "Slytherin": np.empty([tn, 1]), "Gryffindor": np.empty([tn, 1]), "Hufflepuff": np.empty([tn, 1]) }
+            theta_data = { "Ravenclaw": np.zeros([tn, 1]), "Slytherin": np.zeros([tn, 1]), "Gryffindor": np.zeros([tn, 1]), "Hufflepuff": np.zeros([tn, 1]) }
             for i in range(4):
                 theta_list = theta_file.readline().split(",")
                 for i in range(tn):
