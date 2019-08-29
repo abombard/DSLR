@@ -24,12 +24,15 @@ if __name__ == '__main__':
     feature_number = len(header_histo)
     mean_features = logreg_train.calc_mean_features(features_histo, feature_number)
     data = logreg_predict.read_data(sys.argv[1], feature_number, mean_features)
-    data = logreg_train.scale(data)
+    data_house = logreg_train.read_data(sys.argv[1], feature_number, mean_features)
+    min_matrix = np.min(data_house["Features"], axis = 1).reshape(-1, 1)
+    max_matrix = np.max(data_house["Features"], axis = 1).reshape(-1, 1)
+    data = logreg_train.scale(data, min_matrix, max_matrix)
     data = np.vstack((np.matrix(np.ones(len(data[0]))), data))
     tn = feature_number + 1
     theta_data = file.read_theta(sys.argv[2], tn)
     houses = logreg_predict.logreg_predict(data, theta_data)
-    data_house = logreg_train.read_data(sys.argv[1], feature_number, mean_features)
+    
     l = len(houses)
     e = 0
     for i in range(l):
